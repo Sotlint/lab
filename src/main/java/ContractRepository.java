@@ -1,15 +1,27 @@
 
 import java.util.Arrays;
-
+import java.util.function.Predicate;
+import java.util.Comparator;
 public class ContractRepository
 {
     private Contract[] contracts;
     private int size;
+
+    ISorter<Contract> sorter;
+
+
+
+    public void sort(Comparator<Contract> comparator) {
+            sorter.sort(contracts, comparator);
+    }
+
+
     /**
      * Создает новый репозиторий для контрактов
      */
-    public ContractRepository()
+    public ContractRepository(ISorter<Contract> sorter)
     {
+        this.sorter = sorter;
         size = 0;
         contracts = new Contract[size];
     }
@@ -100,4 +112,35 @@ public class ContractRepository
     {
         return contracts;
     }
+
+
+    public Contract[] searchContract(Predicate<Contract>... predicates)
+    {
+        int size = 0;
+        Contract[] findContracts = new Contract[size];
+
+        for (Contract contract : contracts) {
+
+            for (Predicate<Contract> predicate : predicates) {
+                if (predicate.test(contract)) {
+                    if (size == findContracts.length) {
+                        findContracts = Arrays.copyOf(findContracts, findContracts.length + 1);
+                    }
+                    findContracts[size++] = contract;
+                }
+            }
+        }
+            if(size>=1) {
+                return findContracts;
+            }
+            else
+            {
+                return null;
+            }
+
+
+    }
+
+
+
 }
